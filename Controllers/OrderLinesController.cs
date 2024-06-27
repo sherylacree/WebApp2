@@ -57,6 +57,7 @@ namespace WebApp2.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+               await RecalcTotal(orderLine.OrderId);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -80,6 +81,7 @@ namespace WebApp2.Controllers
         {
             _context.OrderLines.Add(orderLine);
             await _context.SaveChangesAsync();
+            await RecalcTotal(orderLine.OrderId);
 
             return CreatedAtAction("GetOrderLine", new { id = orderLine.Id }, orderLine);
         }
@@ -96,6 +98,7 @@ namespace WebApp2.Controllers
 
             _context.OrderLines.Remove(orderLine);
             await _context.SaveChangesAsync();
+            await RecalcTotal(orderLine.OrderId);
 
             return NoContent();
         }
