@@ -29,6 +29,16 @@ namespace WebApp2.Controllers
         }
 
         // GET: api/Employees/5
+        [HttpGet("login/{email}/{password}")]
+        public async Task<ActionResult<Employee>> Login(string email, string password) {
+            var employee = await _context.Employees.SingleOrDefaultAsync(x => x.Email == email && x.Password ==password);
+
+            if (employee == null) {
+                return NotFound();
+            }
+
+            return employee;
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult<Employee>> GetEmployee(int id)
         {
