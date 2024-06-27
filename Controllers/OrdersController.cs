@@ -78,6 +78,7 @@ namespace WebApp2.Controllers
         [HttpPost]
         public async Task<ActionResult<Order>> PostOrder(Order order)
         {
+            order.Status = "NEW";
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
@@ -98,6 +99,31 @@ namespace WebApp2.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        //CUSTOM METHODS
+        //GET METHOD TO FIND ORDERS BY THEIR STATUS
+        //URL: api/orders/status/{status}
+        [HttpGet("status/{status}")]
+
+        public async Task<ActionResult<IEnumerable<Order>>> GetOrderByStatus(string status) 
+        {
+
+            return await _context.Orders.Where(x => x.Status == status).ToListAsync();
+
+
+        }
+
+
+        //PUT METHOD TO UPDATE THE STATUS OF THE ORDER TO SHIPPED
+        //URL: 
+        [HttpPut("shipped/{orderId}")]
+        public async Task<IActionResult> ShipOrder(int orderId, Order order)
+        {
+            order!.Status = "SHIPPED";
+
+            return await PutOrder(orderId, order);
+
         }
 
         private bool OrderExists(int id)

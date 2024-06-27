@@ -99,7 +99,33 @@ namespace WebApp2.Controllers
 
             return NoContent();
         }
+        //CUSTOM METHODS
+        //Calculate Total and apply that to Orders
 
+        private async Task<IActionResult> RecalcTotal(int orderId)
+        {
+            var order = await _context.Orders.FindAsync(orderId);
+
+            if (order is null)
+            {
+                return NotFound();
+            }
+
+            var total = (from ol in _context.OrderLines
+                         join i in _context.Items
+                         on ol.ItemId equals i.Id
+                         where (ol.OrderId == orderId)
+                         select new
+                         {
+                             LineTotal = ol.Quantity * i.Price
+                         }).Sum(x => x.LineTotal);
+
+            order.Total = total;
+            await _context.SaveChangesAsync();
+
+            return Ok(order);             
+
+         }             
         private bool OrderLineExists(int id)
         {
             return _context.OrderLines.Any(e => e.Id == id);
